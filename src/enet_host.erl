@@ -159,14 +159,6 @@ handle_call({connect, IP, Port, Channels}, _From, S) ->
         end,
     {reply, Reply, S};
 
-ensure_sent(A,B,C,D) ->
-    case gen_udp:send(A,B,C,D) of
-        {error, eagain} ->
-            timer:sleep(100),
-            ensure_sent(A,B,C,D);
-        ok -> ok
-    end.
-
 handle_call({send_outgoing_commands, Commands, IP, Port, ID}, _From, S) ->
     %%
     %% Received outgoing commands from a peer.
@@ -185,6 +177,13 @@ handle_call({send_outgoing_commands, Commands, IP, Port, ID}, _From, S) ->
     ensure_sent(S#state.socket, IP, Port, Packet),
     {reply, {sent_time, SentTime}, S}.
 
+ensure_sent(A,B,C,D) ->
+    case gen_udp:send(A,B,C,D) of
+        {error, eagain} ->
+            timer:sleep(100),
+            ensure_sent(A,B,C,D);
+        ok -> ok
+    end.
 
 %%%
 %%% handle_cast
