@@ -162,7 +162,7 @@ handle_call({connect, IP, Port, Channels}, _From, S) ->
 ensure_sent(A,B,C,D) ->
     case gen_udp:send(A,B,C,D) of
         {error, eagain} ->
-            timer.sleep(100),
+            timer:sleep(100),
             ensure_sent(A,B,C,D);
         ok -> ok
     end.
